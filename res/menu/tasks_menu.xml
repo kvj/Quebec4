@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_new_text"
+        android:showAsAction="ifRoom"
+        android:title="New text"/>
+
+    <item
+        android:id="@+id/menu_new_camera"
+        android:showAsAction="ifRoom"
+        android:title="New photo"/>
+
+    <item
+        android:id="@+id/menu_new_path"
+        android:showAsAction="ifRoom"
+        android:title="New path"/>
+
+    <item
+        android:id="@+id/menu_settings"
+        android:showAsAction="ifRoom"
+        android:title="Settings"/>
+
+</menu>

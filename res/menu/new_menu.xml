@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+    <item
+        android:id="@+id/menu_create"
+        android:showAsAction="ifRoom"
+        android:title="Create"/>
+
+    <item
+        android:id="@+id/menu_camera"
+        android:showAsAction="ifRoom"
+        android:title="Camera"/>
+
+    <item
+        android:id="@+id/menu_gallery"
+        android:showAsAction="ifRoom"
+        android:title="Gallery"/>
+
+</menu>

@@ -1,0 +1,6 @@
+.DS_Store
+*~
+gen
+bin
+local.properties
+Thumbs.db
