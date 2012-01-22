@@ -1,7 +1,11 @@
 package org.kvj.quebec4.service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.kvj.quebec4.R;
 import org.kvj.quebec4.service.data.PointBean;
@@ -11,16 +15,90 @@ import org.kvj.quebec4.service.data.TaskBean;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
+import android.util.Log;
 
 public class Q4Controller {
 
+	public static interface ControllerListener {
+
+		public void searching();
+
+		public void waiting();
+
+		public void done();
+
+		public void schedule(int taskID, int mins);
+	}
+
 	private Q4DBHelper db = null;
+	private LocationController locationController = null;
+	private ControllerListener listener = null;
 
 	public Q4Controller() {
 		db = new Q4DBHelper(Q4App.getInstance());
 		if (!db.open()) {
 			db = null;
 		}
+		locationController = new LocationController(Q4App.getInstance()) {
+
+			@Override
+			public void locationStarted() {
+			}
+
+			@Override
+			public boolean locationFound(Location location) {
+				PointBean point = null;
+				if (null != location) {
+					int accuracy = Q4App.getInstance().getIntPreference(
+							R.string.accuracyConfig,
+							R.string.accuracyConfigDefault);
+					if (location.getAccuracy() > accuracy) {
+						return false;
+					}
+					point = new PointBean();
+					point.accuracy = location.getAccuracy();
+					point.altitude = location.getAltitude();
+					point.lat = location.getLatitude();
+					point.lon = location.getLongitude();
+					point.speed = location.getSpeed();
+					Log.i(TAG, "Found point: " + pointToCoordinates(point)
+							+ ", " + pointToPointDetails(point));
+				}
+				List<TaskBean> tasks = getTasks(TaskBean.STATUS_CONSUME,
+						TaskBean.STATUS_CONSUME_AND_FINISH);
+				for (int i = 0; i < tasks.size(); i++) {
+					TaskBean task = tasks.get(i);
+					if (null != point) {
+						point.taskID = task.id;
+						createPoint(point);
+					}
+					if (TaskBean.TYPE_POINT == task.type) {
+						updateStatus(task.id, TaskBean.STATUS_READY);
+					}
+					if (TaskBean.TYPE_PATH == task.type) {
+						if (TaskBean.STATUS_CONSUME_AND_FINISH == task.status) {
+							updateStatus(task.id, TaskBean.STATUS_READY);
+						} else {
+							updateStatus(task.id, TaskBean.STATUS_SLEEP);
+							listener.schedule(task.id, task.interval);
+						}
+					}
+				}
+				sendTasks();
+				List<TaskBean> sleepTasks = getTasks(TaskBean.STATUS_SLEEP);
+				if (sleepTasks.size() > 0) {
+					listener.waiting();
+				} else {
+					listener.done();
+				}
+				return true;
+			}
+
+			@Override
+			public void locationFinished() {
+			}
+		};
 	}
 
 	public Integer createTask(TaskBean task) {
@@ -80,7 +158,7 @@ public class Q4Controller {
 		return point;
 	}
 
-	List<TaskBean> getTasks(int... statuses) {
+	public List<TaskBean> getTasks(int... statuses) {
 		List<TaskBean> result = new ArrayList<TaskBean>();
 		if (null == db || null == statuses || 0 == statuses.length) {
 			return result;
@@ -156,7 +234,7 @@ public class Q4Controller {
 		return null;
 	}
 
-	List<PointBean> getPoints(Integer taskID) {
+	public List<PointBean> getPoints(Integer taskID) {
 		List<PointBean> result = new ArrayList<PointBean>();
 		if (null == db) {
 			return result;
@@ -204,14 +282,37 @@ public class Q4Controller {
 						Q4App.getInstance()
 								.getStringPreference(R.string.tagsConfig,
 										R.string.tagsConfigDefault));
+				if (null != task.media) {
+					createIntent.putExtra("attachment", task.media);
+				}
 				List<PointBean> points = getPoints(task.id);
 				ArrayList<String> paramNames = new ArrayList<String>();
 				ArrayList<String> paramValues = new ArrayList<String>();
 				if (task.type == TaskBean.TYPE_POINT && points.size() > 0) {
 					paramNames.add("COORDINATES");
 					paramValues.add(pointToCoordinates(points.get(0)));
-					paramNames.add("COORDINATE_DETAILS");
+					paramNames.add("COORDINATES_DETAILS");
 					paramValues.add(pointToPointDetails(points.get(0)));
+				}
+				if (task.type == TaskBean.TYPE_PATH) {
+					ArrayList<String> childrenTypes = new ArrayList<String>();
+					ArrayList<String> childrenValues = new ArrayList<String>();
+					StringBuilder buffer = new StringBuilder(":PATH:\n");
+					DateFormat dateFormat = new SimpleDateFormat(
+							"yyyy-MM-dd EEE HH:mm", Locale.ENGLISH);
+					for (PointBean point : points) {
+						buffer.append(String.format("%s,%s,%s\n",
+								dateFormat.format(new Date(point.created)),
+								pointToCoordinates(point),
+								pointToPointDetails(point)));
+					}
+					buffer.append(":END:");
+					childrenTypes.add("drawer");
+					childrenValues.add(buffer.toString());
+					createIntent.putStringArrayListExtra("children_types",
+							childrenTypes);
+					createIntent.putStringArrayListExtra("children_values",
+							childrenValues);
 				}
 				createIntent.putStringArrayListExtra("properties_names",
 						paramNames);
@@ -226,8 +327,103 @@ public class Q4Controller {
 	}
 
 	public void wantLocation() {
-		// TODO Auto-generated method stub
-
+		locationController.enableLocation(Q4App.getInstance().getIntPreference(
+				R.string.timeoutConfig, R.string.timeoutConfigDefault));
+		if (null != listener) {
+			listener.searching();
+		}
 	}
 
+	public void setListener(ControllerListener listener) {
+		this.listener = listener;
+	}
+
+	public TaskBean getTask(int id) {
+		if (null == db) {
+			return null;
+		}
+		try {
+			Cursor c = db.getDatabase().query("tasks", tasksFields, "id=?",
+					new String[] { Integer.toString(id) }, null, null,
+					"created");
+			if (c.moveToFirst()) {
+				TaskBean task = cursorToTask(c);
+				c.close();
+				return task;
+			}
+			c.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void refreshStatus() {
+		List<TaskBean> consumingTasks = getTasks(TaskBean.STATUS_CONSUME,
+				TaskBean.STATUS_CONSUME_AND_FINISH);
+		if (consumingTasks.size() > 0) {
+			listener.searching();
+		} else {
+			locationController.disableLocation();
+			List<TaskBean> sleepTasks = getTasks(TaskBean.STATUS_SLEEP);
+			if (sleepTasks.size() > 0) {
+				listener.waiting();
+			} else {
+				listener.done();
+			}
+		}
+	}
+
+	public synchronized void rescheduleTasks() {
+		List<TaskBean> sleepTasks = getTasks(TaskBean.STATUS_SLEEP);
+		for (TaskBean task : sleepTasks) {
+			listener.schedule(task.id, task.interval);
+		}
+		if (sleepTasks.size() > 0) {
+			listener.waiting();
+		}
+		List<TaskBean> consumingTasks = getTasks(TaskBean.STATUS_CONSUME,
+				TaskBean.STATUS_CONSUME_AND_FINISH);
+		if (consumingTasks.size() > 0) {
+			wantLocation();
+		}
+	}
+
+	public boolean removePoint(Integer pointID) {
+		if (null == db) {
+			return false;
+		}
+		try {
+			db.getDatabase().beginTransaction();
+			db.getDatabase().delete("points", "id=?",
+					new String[] { pointID.toString() });
+			db.getDatabase().setTransactionSuccessful();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.getDatabase().endTransaction();
+		}
+		return false;
+	}
+
+	public boolean removeTask(Integer taskID) {
+		if (null == db) {
+			return false;
+		}
+		try {
+			db.getDatabase().beginTransaction();
+			db.getDatabase().delete("points", "task_id=?",
+					new String[] { taskID.toString() });
+			db.getDatabase().delete("tasks", "id=?",
+					new String[] { taskID.toString() });
+			db.getDatabase().setTransactionSuccessful();
+			return true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.getDatabase().endTransaction();
+		}
+		return false;
+	}
 }

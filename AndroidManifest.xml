@@ -47,8 +47,16 @@
             android:label="New task"
             android:name=".ui.NewTask"
             android:configChanges="keyboardHidden|orientation"
-            android:uiOptions="splitActionBarWhenNarrow">
+            android:uiOptions="splitActionBarWhenNarrow"
+            android:windowSoftInputMode="adjustResize">
         </activity>
-        </application>
+        
+        <activity
+            android:label="Configuration"
+            android:name=".ui.ConfigActivity"
+            android:configChanges="keyboardHidden|orientation">
+        </activity>
+	
+	</application>
 
 </manifest>

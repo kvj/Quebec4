@@ -4,6 +4,10 @@
     <string name="todoConfigDefault"></string>
     <string name="tagsConfig">tagsConfig</string>
     <string name="tagsConfigDefault"></string>
+    <string name="accuracyConfig">accuracyConfig</string>
+    <string name="accuracyConfigDefault">100</string>
+    <string name="timeoutConfig">timeoutConfig</string>
+    <string name="timeoutConfigDefault">0</string>
         
     
 </resources>

@@ -1,6 +1,9 @@
 package org.kvj.quebec4.ui;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -208,8 +211,9 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 	private void save() {
 		String titleStr = title.getText().toString().trim();
 		if (TextUtils.isEmpty(titleStr)) {
-			notifyUser("Title is empty");
-			return;
+			titleStr = "Drop ["
+					+ (new SimpleDateFormat("yyyy-MM-dd EEE HH:mm",
+							Locale.ENGLISH)).format(new Date()) + "]";
 		}
 		TaskBean task = new TaskBean();
 		task.title = titleStr;
@@ -251,6 +255,7 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 			}
 
 		}
+		setResult(RESULT_OK);
 		finish();
 	}
 

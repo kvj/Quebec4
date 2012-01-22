@@ -2,16 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
         android:id="@+id/menu_create"
+        android:icon="@drawable/a_save"
         android:showAsAction="ifRoom"
         android:title="Create"/>
 
     <item
         android:id="@+id/menu_camera"
+        android:icon="@drawable/a_camera"
         android:showAsAction="ifRoom"
         android:title="Camera"/>
 
     <item
         android:id="@+id/menu_gallery"
+        android:icon="@drawable/a_gallery"
         android:showAsAction="ifRoom"
         android:title="Gallery"/>
 

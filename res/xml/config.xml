@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+	<PreferenceCategory
+	    android:title="Common">
+	    <EditTextPreference
+	        android:key="@string/accuracyConfig"
+	        android:title="Accuracy"
+	        android:summary="GPS accuracy in meters"
+	        android:defaultValue="@string/accuracyConfigDefault"/>
+
+	    <EditTextPreference
+	        android:key="@string/timeoutConfig"
+	        android:title="Location timeout"
+	        android:summary="Location timeout in minutes"
+	        android:defaultValue="@string/timeoutConfigDefault"/>
+
+		<EditTextPreference
+	        android:key="@string/todoConfig"
+	        android:title="TODO state"
+	        android:summary="New outline's TODO state"
+	        android:defaultValue="@string/todoConfigDefault"/>
+		
+		<EditTextPreference
+	        android:key="@string/tagsConfig"
+	        android:title="Tags"
+	        android:summary="New outline's tags"
+	        android:defaultValue="@string/tagsConfigDefault"/>
+	    
+	</PreferenceCategory>	    
+
+</PreferenceScreen>

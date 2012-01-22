@@ -1,22 +1,32 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
     <item
-        android:id="@+id/menu_new_text"
+        android:id="@+id/menu_reload"
+        android:icon="@drawable/a_reload"
         android:showAsAction="ifRoom"
-        android:title="New text"/>
+        android:title="Reload"/>
+
+    <item
+        android:id="@+id/menu_new_text"
+        android:icon="@drawable/a_point"
+        android:showAsAction="ifRoom"
+        android:title="New checkin"/>
 
     <item
         android:id="@+id/menu_new_camera"
+        android:icon="@drawable/a_camera"
         android:showAsAction="ifRoom"
         android:title="New photo"/>
 
     <item
         android:id="@+id/menu_new_path"
+        android:icon="@drawable/a_path"
         android:showAsAction="ifRoom"
         android:title="New path"/>
 
     <item
         android:id="@+id/menu_settings"
+        android:icon="@drawable/a_settings"
         android:showAsAction="ifRoom"
         android:title="Settings"/>
 
