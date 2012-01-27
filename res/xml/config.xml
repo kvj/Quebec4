@@ -26,6 +26,13 @@
 	        android:summary="New outline's tags"
 	        android:defaultValue="@string/tagsConfigDefault"/>
 	    
+        <ListPreference
+            android:defaultValue="@string/widgetBGDefault"
+            android:entries="@array/widget_bg_values"
+            android:entryValues="@array/widget_bg_ids"
+            android:key="@string/widgetBG"
+            android:summary="Set widget background opacity"
+            android:title="Widget background" />
 	</PreferenceCategory>	    
 
 </PreferenceScreen>

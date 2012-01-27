@@ -9,5 +9,19 @@
     <string name="timeoutConfig">timeoutConfig</string>
     <string name="timeoutConfigDefault">0</string>
         
+    <string name="widgetBG">widgetBG</string>
+    <string name="widgetBGDefault">100</string>
+	<string-array name="widget_bg_ids">
+		<item>0</item>
+		<item>10</item>
+		<item>50</item>
+		<item>100</item>
+	</string-array>
+	<string-array name="widget_bg_values">
+		<item>Transparent</item>
+		<item>Opacity 10%</item>
+		<item>Opacity 50%</item>
+		<item>Non-transparent</item>
+	</string-array>
     
 </resources>

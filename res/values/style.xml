@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="widget_button" parent="@android:style/Widget.ImageButton">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:background">@drawable/widget_button_bg</item>
+        <item name="android:layout_weight">1</item>
+	</style>
+</resources>

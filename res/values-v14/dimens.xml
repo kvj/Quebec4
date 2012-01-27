@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-
-	<string name="app_name">Quebec4</string>
-
+	<dimen name="widget_margin">0dp</dimen>
 </resources>
