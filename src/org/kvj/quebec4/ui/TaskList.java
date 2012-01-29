@@ -147,6 +147,9 @@ public class TaskList extends ListActivity implements
 			Intent configIntent = new Intent(this, ConfigActivity.class);
 			startActivity(configIntent);
 			break;
+		case R.id.menu_new_drawing:
+			startActivity(new Intent(this, DrawingPane.class));
+			break;
 		}
 		return true;
 	}

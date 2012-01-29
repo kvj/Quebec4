@@ -34,6 +34,7 @@ public class Q4Controller {
 	private Q4DBHelper db = null;
 	private LocationController locationController = null;
 	private ControllerListener listener = null;
+	private DrawingController drawing = null;
 
 	public Q4Controller() {
 		db = new Q4DBHelper(Q4App.getInstance());
@@ -425,5 +426,16 @@ public class Q4Controller {
 			db.getDatabase().endTransaction();
 		}
 		return false;
+	}
+
+	public DrawingController getDrawing() {
+		if (null == drawing) {
+			drawing = new DrawingController(Q4App.getInstance());
+		}
+		return drawing;
+	}
+
+	public void clearDrawing() {
+		drawing = null;
 	}
 }

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <org.kvj.quebec4.ui.widget.LinesBackground
+            android:id="@+id/drawing_bg"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <org.kvj.quebec4.ui.widget.PenCatcher
+            android:id="@+id/drawing_pen"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <Button
+            android:id="@+id/drawing_toggle"
+            android:layout_width="@dimen/drawing_button_size"
+            android:layout_height="@dimen/drawing_button_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:text="+" />
+
+        <ImageButton
+            android:id="@+id/drawing_top"
+            android:src="@drawable/a_reload"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drawing_button_size"
+            android:layout_alignParentTop="true"
+            android:text="^" />
+
+        <Button
+            android:id="@+id/drawing_bottom"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/drawing_button_size"
+            android:layout_alignParentBottom="true"
+            android:layout_marginRight="@dimen/drawing_button_size"
+            android:text="." />
+
+        <Button
+            android:id="@+id/drawing_left"
+            android:layout_width="@dimen/drawing_button_size"
+            android:layout_height="match_parent"
+            android:layout_alignParentLeft="true"
+            android:layout_marginBottom="@dimen/drawing_button_size"
+            android:layout_marginTop="@dimen/drawing_button_size"
+            android:text="-" />
+
+        <Button
+            android:id="@+id/drawing_right"
+            android:layout_width="@dimen/drawing_button_size"
+            android:layout_height="match_parent"
+            android:layout_alignParentRight="true"
+            android:layout_marginBottom="@dimen/drawing_button_size"
+            android:layout_marginTop="@dimen/drawing_button_size"
+            android:text="-" />
+    </RelativeLayout>
+
+</FrameLayout>

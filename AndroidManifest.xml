@@ -43,6 +43,11 @@
             </intent-filter>
         </activity>
         <activity
+            android:configChanges="orientation"
+            android:label="Drawing"
+            android:name=".ui.DrawingPane">
+        </activity>
+        <activity
             android:configChanges="keyboardHidden|orientation"
             android:label="New task"
             android:name=".ui.NewTask"

@@ -7,6 +7,11 @@
         android:title="Reload"/>
 
     <item
+        android:id="@+id/menu_new_drawing"
+        android:icon="@drawable/a_gallery"
+        android:showAsAction="ifRoom"
+        android:title="New drawing"/>
+    <item
         android:id="@+id/menu_new_text"
         android:icon="@drawable/a_point"
         android:showAsAction="ifRoom"

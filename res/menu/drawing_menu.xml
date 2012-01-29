@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/menu_d_erase"
+        android:showAsAction="ifRoom"
+        android:title="Erase"/>
+
+    <item
+        android:id="@+id/menu_d_save"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/a_save"
+        android:title="Save"/>
+
+    <item
+        android:id="@+id/menu_d_d_row"
+        android:showAsAction="ifRoom"
+        android:title="- Row"/>
+
+    <item
+        android:id="@+id/menu_d_d_col"
+        android:showAsAction="ifRoom"
+        android:title="- Column"/>
+
+</menu>
