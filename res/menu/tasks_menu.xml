@@ -8,7 +8,7 @@
 
     <item
         android:id="@+id/menu_new_drawing"
-        android:icon="@drawable/a_gallery"
+        android:icon="@drawable/a_d_drawing"
         android:showAsAction="ifRoom"
         android:title="New drawing"/>
     <item

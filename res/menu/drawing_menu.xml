@@ -2,24 +2,58 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android" >
 
     <item
-        android:id="@+id/menu_d_erase"
-        android:showAsAction="ifRoom"
-        android:title="Erase"/>
-
-    <item
         android:id="@+id/menu_d_save"
         android:showAsAction="ifRoom"
         android:icon="@drawable/a_save"
         android:title="Save"/>
 
     <item
-        android:id="@+id/menu_d_d_row"
+        android:id="@+id/menu_d_r_row"
         android:showAsAction="ifRoom"
-        android:title="- Row"/>
+        android:icon="@drawable/a_d_r_row"
+        android:title="Remove row"/>
 
     <item
-        android:id="@+id/menu_d_d_col"
+        android:id="@+id/menu_d_r_col"
         android:showAsAction="ifRoom"
-        android:title="- Column"/>
+        android:icon="@drawable/a_d_r_col"
+        android:title="Remove column"/>
 
+    <item
+        android:id="@+id/menu_d_clear"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/a_d_clear"
+        android:title="Clear page"/>
+
+    <item
+        android:id="@+id/menu_d_grid"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/a_d_grid"
+        android:title="Grid size">
+        <menu>
+            <item android:id="@+id/menu_d_grid_0"
+                android:title="No grid"/>
+            <item android:id="@+id/menu_d_grid_1"
+                android:title="Small"/>
+            <item android:id="@+id/menu_d_grid_2"
+                android:title="Medium"/>
+            <item android:id="@+id/menu_d_grid_3"
+                android:title="Large"/>
+		</menu>
+    </item>
+
+    <item
+        android:id="@+id/menu_d_width"
+        android:showAsAction="ifRoom"
+        android:icon="@drawable/a_d_width"
+        android:title="Stroke width">
+        <menu>
+            <item android:id="@+id/menu_d_width_0"
+                android:title="Thin"/>
+            <item android:id="@+id/menu_d_width_1"
+                android:title="Medium"/>
+            <item android:id="@+id/menu_d_width_2"
+                android:title="Thick"/>
+		</menu>
+    </item>
 </menu>

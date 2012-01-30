@@ -2,6 +2,7 @@ package org.kvj.quebec4.widgets;
 
 import org.kvj.quebec4.R;
 import org.kvj.quebec4.service.Q4App;
+import org.kvj.quebec4.ui.DrawingPane;
 import org.kvj.quebec4.ui.NewTask;
 import org.kvj.quebec4.ui.TaskList;
 
@@ -58,6 +59,10 @@ public class CapturePanel extends AppWidgetProvider {
 			views.setOnClickPendingIntent(R.id.w_launcher, PendingIntent
 					.getActivity(context, 0,
 							new Intent(context, TaskList.class),
+							PendingIntent.FLAG_CANCEL_CURRENT));
+			views.setOnClickPendingIntent(R.id.w_drawing, PendingIntent
+					.getActivity(context, 0, new Intent(context,
+							DrawingPane.class),
 							PendingIntent.FLAG_CANCEL_CURRENT));
 			views.setOnClickPendingIntent(R.id.w_point,
 					createCaptureIntent(context, 1, "text"));

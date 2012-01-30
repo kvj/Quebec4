@@ -4,4 +4,5 @@
 	<dimen name="widget_bg_corner">5dp</dimen>
 	<dimen name="widget_bg_border">2dp</dimen>
 	<dimen name="drawing_button_size">40dp</dimen>
+	<dimen name="drawing_button_size_2">80dp</dimen>
 </resources>

@@ -23,5 +23,9 @@
 		<item>Opacity 50%</item>
 		<item>Non-transparent</item>
 	</string-array>
+    <string name="gridSize">gridSize</string>
+    <string name="gridSizeDefault">1</string>
+    <string name="penSize">penSize</string>
+    <string name="penSizeDefault">0</string>
     
 </resources>

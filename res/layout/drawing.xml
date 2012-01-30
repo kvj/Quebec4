@@ -17,47 +17,60 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-        <Button
+        <org.kvj.quebec4.ui.widget.PageNavigator
+            android:id="@+id/drawing_navigator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+        <ImageButton
             android:id="@+id/drawing_toggle"
             android:layout_width="@dimen/drawing_button_size"
             android:layout_height="@dimen/drawing_button_size"
             android:layout_alignParentBottom="true"
             android:layout_alignParentRight="true"
-            android:text="+" />
+            android:src="@drawable/a_d_more" />
+
+        <ImageButton
+            android:id="@+id/drawing_erase"
+            android:layout_width="@dimen/drawing_button_size"
+            android:layout_height="@dimen/drawing_button_size"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/drawing_button_size"
+            android:src="@drawable/a_d_erase" />
 
         <ImageButton
             android:id="@+id/drawing_top"
-            android:src="@drawable/a_reload"
             android:layout_width="match_parent"
             android:layout_height="@dimen/drawing_button_size"
             android:layout_alignParentTop="true"
-            android:text="^" />
+            android:src="@drawable/a_d_m_up" />
 
-        <Button
+        <ImageButton
             android:id="@+id/drawing_bottom"
             android:layout_width="match_parent"
             android:layout_height="@dimen/drawing_button_size"
             android:layout_alignParentBottom="true"
-            android:layout_marginRight="@dimen/drawing_button_size"
-            android:text="." />
+            android:layout_marginRight="@dimen/drawing_button_size_2"
+            android:src="@drawable/a_d_m_down" />
 
-        <Button
+        <ImageButton
             android:id="@+id/drawing_left"
             android:layout_width="@dimen/drawing_button_size"
             android:layout_height="match_parent"
             android:layout_alignParentLeft="true"
             android:layout_marginBottom="@dimen/drawing_button_size"
             android:layout_marginTop="@dimen/drawing_button_size"
-            android:text="-" />
+            android:src="@drawable/a_d_m_left" />
 
-        <Button
+        <ImageButton
             android:id="@+id/drawing_right"
             android:layout_width="@dimen/drawing_button_size"
             android:layout_height="match_parent"
             android:layout_alignParentRight="true"
             android:layout_marginBottom="@dimen/drawing_button_size"
             android:layout_marginTop="@dimen/drawing_button_size"
-            android:text="-" />
+            android:src="@drawable/a_d_m_right" />
     </RelativeLayout>
 
 </FrameLayout>
