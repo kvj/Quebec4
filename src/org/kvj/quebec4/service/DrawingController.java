@@ -13,6 +13,7 @@ import android.graphics.Bitmap.Config;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.View;
 
 public class DrawingController {
@@ -108,6 +109,7 @@ public class DrawingController {
 
 	public void addPage(Context context, PageDirection direction) {
 		PageDirection dir = translateDirection(context, direction);
+		Log.i(TAG, "addPage: " + direction + ", " + dir);
 		switch (dir) {
 		case PageUp:
 			rows.add(0, createRow());
@@ -165,6 +167,7 @@ public class DrawingController {
 	}
 
 	private void createCol(boolean last) {
+		Log.i(TAG, "Create col: " + last);
 		for (List<Bitmap> page : rows) {
 			if (last) {
 				page.add(createPage());

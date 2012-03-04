@@ -45,7 +45,8 @@
         <activity
             android:configChanges="orientation"
             android:label="Drawing"
-            android:name=".ui.DrawingPane">
+            android:name=".ui.DrawingPane"
+            android:uiOptions="splitActionBarWhenNarrow">
         </activity>
         <activity
             android:configChanges="keyboardHidden|orientation"

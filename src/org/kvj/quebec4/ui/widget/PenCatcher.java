@@ -10,6 +10,7 @@ import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.Paint.Cap;
+import android.graphics.Paint.Join;
 import android.graphics.Paint.Style;
 import android.graphics.Path;
 import android.graphics.PorterDuff;
@@ -55,7 +56,8 @@ public class PenCatcher extends View implements OnTouchListener {
 			path.moveTo(x, y);
 			pathPaint = new Paint();
 			pathPaint.setStyle(Style.STROKE);
-			pathPaint.setStrokeCap(Cap.SQUARE);
+			pathPaint.setStrokeCap(Cap.ROUND);
+			pathPaint.setStrokeJoin(Join.ROUND);
 			int size = Q4App.getInstance().getIntPreference(R.string.penSize,
 					R.string.penSizeDefault);
 			strokeWidth = widths[0];
@@ -80,9 +82,9 @@ public class PenCatcher extends View implements OnTouchListener {
 			int toY = (int) event.getY();
 			float dx = Math.abs(x - toX);
 			float dy = Math.abs(y - toY);
-			if (dx < TOUCH_TOLERANCE && dy < TOUCH_TOLERANCE) {
-				return true;
-			}
+			// if (dx < TOUCH_TOLERANCE && dy < TOUCH_TOLERANCE) {
+			// return true;
+			// }
 			path.quadTo(toX, toY, (x + toX) / 2, (y + toY) / 2);
 			Rect rect = new Rect();
 			int gap = (int) DrawingController.dp2px(getContext(), strokeWidth);
