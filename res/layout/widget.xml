@@ -2,35 +2,35 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/widget_margin">
+    android:padding="@dimen/widget_margin" >
 
     <LinearLayout
-            android:id="@+id/w_root"
+        android:id="@+id/w_root"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_gravity="center"
-        android:orientation="horizontal"
-        android:background="@drawable/widget_bg">
+        android:background="@drawable/widget_bg"
+        android:orientation="horizontal" >
 
         <ImageButton
             android:id="@+id/w_launcher"
             style="@style/widget_button"
-            android:src="@drawable/w_launcher"/>
+            android:src="@drawable/w_launcher" />
 
         <ImageButton
             android:id="@+id/w_drawing"
             style="@style/widget_button"
-            android:src="@drawable/a_d_drawing"/>
-        
+            android:src="@drawable/a_d_drawing" />
+
         <ImageButton
             android:id="@+id/w_note"
             style="@style/widget_button"
-            android:src="@drawable/a_note"/>
-        
+            android:src="@drawable/a_note" />
+
         <ImageButton
             android:id="@+id/w_point"
             style="@style/widget_button"
-            android:src="@drawable/a_point"/>
+            android:src="@drawable/a_point" />
 
         <ImageButton
             android:id="@+id/w_camera"
@@ -41,7 +41,6 @@
             android:id="@+id/w_path"
             style="@style/widget_button"
             android:src="@drawable/a_path" />
-
     </LinearLayout>
 
 </FrameLayout>
