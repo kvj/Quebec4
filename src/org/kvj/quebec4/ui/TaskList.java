@@ -59,6 +59,10 @@ public class TaskList extends ListActivity implements
 		getMenuInflater().inflate(R.menu.task_context, menu);
 		TaskBean task = adapter.getItem(contextMenuInfo.position);
 		menuTaskID = task.id;
+		menu.findItem(R.id.menu_finish_at).setEnabled(
+				task.type == TaskBean.TYPE_PATH);
+		menu.findItem(R.id.menu_point_and_finish).setEnabled(
+				task.type == TaskBean.TYPE_PATH);
 		List<PointBean> points = controller.getPoints(task.id);
 		Menu subMenu = menu.findItem(R.id.menu_finish_at).getSubMenu();
 		subMenu.clear();
@@ -111,7 +115,6 @@ public class TaskList extends ListActivity implements
 						}
 					}
 					controller.updateStatus(task.id, TaskBean.STATUS_READY);
-					controller.sendTasks();
 				}
 			}
 		} catch (Exception e) {
@@ -127,7 +130,11 @@ public class TaskList extends ListActivity implements
 		Intent newIntent = new Intent(this, NewTask.class);
 		switch (item.getItemId()) {
 		case R.id.menu_new_text:
-			newIntent.putExtra("type", "text");
+			newIntent.putExtra("type", "point");
+			startActivityForResult(newIntent, CREATE_TASK);
+			break;
+		case R.id.menu_new_note:
+			newIntent.putExtra("type", "none");
 			startActivityForResult(newIntent, CREATE_TASK);
 			break;
 		case R.id.menu_new_camera:

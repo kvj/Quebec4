@@ -418,7 +418,6 @@ public class DrawingPane extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 							notifyUser("Task is not created");
 							return;
 						}
-						controller.sendTasks();
 					}
 					controller.clearDrawing();
 					setResult(RESULT_OK);

@@ -12,6 +12,11 @@
         android:showAsAction="ifRoom"
         android:title="New drawing"/>
     <item
+        android:id="@+id/menu_new_note"
+        android:icon="@drawable/a_note"
+        android:showAsAction="ifRoom"
+        android:title="New note"/>
+    <item
         android:id="@+id/menu_new_text"
         android:icon="@drawable/a_point"
         android:showAsAction="ifRoom"

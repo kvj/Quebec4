@@ -61,13 +61,12 @@ public class TaskListAdapter implements ListAdapter {
 		case TaskBean.TYPE_POINT:
 			iconView.setImageResource(null == task.media ? R.drawable.a_point
 					: R.drawable.a_gallery);
-			infoView.setText("");
 			break;
 		case TaskBean.TYPE_PATH:
 			iconView.setImageResource(R.drawable.a_path);
-			infoView.setText(task.info);
 			break;
 		}
+		infoView.setText(task.info);
 		return convertView;
 	}
 
@@ -94,13 +93,14 @@ public class TaskListAdapter implements ListAdapter {
 	public void setController(Context context, Q4Controller controller) {
 		this.controller = controller;
 		List<TaskBean> tasks = controller.getTasks(TaskBean.STATUS_CONSUME,
-				TaskBean.STATUS_SLEEP, TaskBean.STATUS_CONSUME_AND_FINISH);
+				TaskBean.STATUS_SLEEP, TaskBean.STATUS_CONSUME_AND_FINISH,
+				TaskBean.STATUS_READY);
 		synchronized (data) {
 			data.clear();
 			data.addAll(tasks);
 			for (TaskBean task : data) {
+				StringBuilder info = new StringBuilder();
 				if (TaskBean.TYPE_PATH == task.type) {
-					StringBuilder info = new StringBuilder();
 					info.append("Every " + task.interval + " min. ");
 					List<PointBean> points = controller.getPoints(task.id);
 					if (points.size() > 0) {
@@ -110,8 +110,15 @@ public class TaskListAdapter implements ListAdapter {
 								+ DateFormat.getTimeFormat(context).format(
 										new Date(last.created)));
 					}
-					task.info = info.toString();
+					if (task.status == TaskBean.STATUS_READY) {
+						info.append(", finished");
+					}
+				} else {
+					if (task.status == TaskBean.STATUS_READY) {
+						info.append("finished");
+					}
 				}
+				task.info = info.toString();
 			}
 		}
 		if (null != observer) {

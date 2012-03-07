@@ -23,6 +23,11 @@
             android:src="@drawable/a_d_drawing"/>
         
         <ImageButton
+            android:id="@+id/w_note"
+            style="@style/widget_button"
+            android:src="@drawable/a_note"/>
+        
+        <ImageButton
             android:id="@+id/w_point"
             style="@style/widget_button"
             android:src="@drawable/a_point"/>

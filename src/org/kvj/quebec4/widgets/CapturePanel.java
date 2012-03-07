@@ -64,12 +64,14 @@ public class CapturePanel extends AppWidgetProvider {
 					.getActivity(context, 0, new Intent(context,
 							DrawingPane.class),
 							PendingIntent.FLAG_CANCEL_CURRENT));
+			views.setOnClickPendingIntent(R.id.w_note,
+					createCaptureIntent(context, 1, "none"));
 			views.setOnClickPendingIntent(R.id.w_point,
-					createCaptureIntent(context, 1, "text"));
+					createCaptureIntent(context, 2, "point"));
 			views.setOnClickPendingIntent(R.id.w_camera,
-					createCaptureIntent(context, 2, "camera"));
+					createCaptureIntent(context, 3, "camera"));
 			views.setOnClickPendingIntent(R.id.w_path,
-					createCaptureIntent(context, 3, "path"));
+					createCaptureIntent(context, 4, "path"));
 			appWidgetManager.updateAppWidget(id, views);
 		}
 	}

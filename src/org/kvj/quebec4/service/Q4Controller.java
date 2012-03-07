@@ -1,19 +1,17 @@
 package org.kvj.quebec4.service;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.kvj.quebec4.R;
 import org.kvj.quebec4.service.data.PointBean;
 import org.kvj.quebec4.service.data.Q4DBHelper;
 import org.kvj.quebec4.service.data.TaskBean;
 
 import android.content.ContentValues;
-import android.content.Intent;
 import android.database.Cursor;
 import android.location.Location;
 import android.util.Log;
@@ -86,7 +84,7 @@ public class Q4Controller {
 						}
 					}
 				}
-				sendTasks();
+				// sendTasks();
 				List<TaskBean> sleepTasks = getTasks(TaskBean.STATUS_SLEEP);
 				if (sleepTasks.size() > 0) {
 					listener.waiting();
@@ -265,67 +263,105 @@ public class Q4Controller {
 				point.speed, point.altitude);
 	}
 
-	public void sendTasks() {
-		try {
-			List<TaskBean> readyTasks = getTasks(TaskBean.STATUS_READY);
-			for (int i = 0; i < readyTasks.size(); i++) {
-				TaskBean task = readyTasks.get(i);
-				Intent createIntent = new Intent(
-						"com.matburt.mobileorg.ng.CREATE");
-				createIntent.putExtra("text", task.title);
-				createIntent.putExtra(
-						"todo",
-						Q4App.getInstance()
-								.getStringPreference(R.string.todoConfig,
-										R.string.todoConfigDefault));
-				createIntent.putExtra(
-						"tags",
-						Q4App.getInstance()
-								.getStringPreference(R.string.tagsConfig,
-										R.string.tagsConfigDefault));
-				if (null != task.media) {
-					createIntent.putExtra("attachment", task.media);
-				}
-				List<PointBean> points = getPoints(task.id);
-				ArrayList<String> paramNames = new ArrayList<String>();
-				ArrayList<String> paramValues = new ArrayList<String>();
-				if (task.type == TaskBean.TYPE_POINT && points.size() > 0) {
-					paramNames.add("COORDINATES");
-					paramValues.add(pointToCoordinates(points.get(0)));
-					paramNames.add("COORDINATES_DETAILS");
-					paramValues.add(pointToPointDetails(points.get(0)));
-				}
-				if (task.type == TaskBean.TYPE_PATH) {
-					ArrayList<String> childrenTypes = new ArrayList<String>();
-					ArrayList<String> childrenValues = new ArrayList<String>();
-					StringBuilder buffer = new StringBuilder(":PATH:\n");
-					DateFormat dateFormat = new SimpleDateFormat(
-							"yyyy-MM-dd EEE HH:mm", Locale.ENGLISH);
-					for (PointBean point : points) {
-						buffer.append(String.format("%s,%s,%s\n",
-								dateFormat.format(new Date(point.created)),
-								pointToCoordinates(point),
-								pointToPointDetails(point)));
-					}
-					buffer.append(":END:");
-					childrenTypes.add("drawer");
-					childrenValues.add(buffer.toString());
-					createIntent.putStringArrayListExtra("children_types",
-							childrenTypes);
-					createIntent.putStringArrayListExtra("children_values",
-							childrenValues);
-				}
-				createIntent.putStringArrayListExtra("properties_names",
-						paramNames);
-				createIntent.putStringArrayListExtra("properties_values",
-						paramValues);
-				createIntent.putExtra("callback", task.id);
-				Q4App.getInstance().startService(createIntent);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+	private JSONObject pointToJSON(PointBean point) throws JSONException {
+		JSONObject result = new JSONObject();
+		result.put("lat", point.lat);
+		result.put("lon", point.lon);
+		result.put("acc", point.accuracy);
+		result.put("alt", point.altitude);
+		result.put("created", point.created);
+		result.put("speed", point.speed);
+		result.put("id", point.id);
+		return result;
 	}
+
+	public JSONObject taskToJSON(TaskBean task, boolean addData)
+			throws JSONException {
+		JSONObject result = new JSONObject();
+		result.put("id", task.id);
+		result.put("title", task.title);
+		result.put("created", task.created);
+		if (addData) {
+			if (null != task.media) {
+				result.put("media", task.media);
+			}
+			List<PointBean> points = getPoints(task.id);
+			if (TaskBean.TYPE_POINT == task.type && points.size() > 0) {
+				result.put("point", pointToJSON(points.get(0)));
+			}
+			if (TaskBean.TYPE_PATH == task.type && points.size() > 0) {
+				JSONArray arr = new JSONArray();
+				for (int i = 0; i < points.size(); i++) {
+					arr.put(pointToJSON(points.get(i)));
+				}
+				result.put("points", arr);
+			}
+		}
+		return result;
+	}
+
+	//
+	// public void sendTasks() {
+	// try {
+	// List<TaskBean> readyTasks = getTasks(TaskBean.STATUS_READY);
+	// for (int i = 0; i < readyTasks.size(); i++) {
+	// TaskBean task = readyTasks.get(i);
+	// Intent createIntent = new Intent(
+	// "com.matburt.mobileorg.ng.CREATE");
+	// createIntent.putExtra("text", task.title);
+	// createIntent.putExtra(
+	// "todo",
+	// Q4App.getInstance()
+	// .getStringPreference(R.string.todoConfig,
+	// R.string.todoConfigDefault));
+	// createIntent.putExtra(
+	// "tags",
+	// Q4App.getInstance()
+	// .getStringPreference(R.string.tagsConfig,
+	// R.string.tagsConfigDefault));
+	// if (null != task.media) {
+	// createIntent.putExtra("attachment", task.media);
+	// }
+	// List<PointBean> points = getPoints(task.id);
+	// ArrayList<String> paramNames = new ArrayList<String>();
+	// ArrayList<String> paramValues = new ArrayList<String>();
+	// if (task.type == TaskBean.TYPE_POINT && points.size() > 0) {
+	// paramNames.add("COORDINATES");
+	// paramValues.add(pointToCoordinates(points.get(0)));
+	// paramNames.add("COORDINATES_DETAILS");
+	// paramValues.add(pointToPointDetails(points.get(0)));
+	// }
+	// if (task.type == TaskBean.TYPE_PATH) {
+	// ArrayList<String> childrenTypes = new ArrayList<String>();
+	// ArrayList<String> childrenValues = new ArrayList<String>();
+	// StringBuilder buffer = new StringBuilder(":PATH:\n");
+	// DateFormat dateFormat = new SimpleDateFormat(
+	// "yyyy-MM-dd EEE HH:mm", Locale.ENGLISH);
+	// for (PointBean point : points) {
+	// buffer.append(String.format("%s,%s,%s\n",
+	// dateFormat.format(new Date(point.created)),
+	// pointToCoordinates(point),
+	// pointToPointDetails(point)));
+	// }
+	// buffer.append(":END:");
+	// childrenTypes.add("drawer");
+	// childrenValues.add(buffer.toString());
+	// createIntent.putStringArrayListExtra("children_types",
+	// childrenTypes);
+	// createIntent.putStringArrayListExtra("children_values",
+	// childrenValues);
+	// }
+	// createIntent.putStringArrayListExtra("properties_names",
+	// paramNames);
+	// createIntent.putStringArrayListExtra("properties_values",
+	// paramValues);
+	// createIntent.putExtra("callback", task.id);
+	// Q4App.getInstance().startService(createIntent);
+	// }
+	// } catch (Exception e) {
+	// e.printStackTrace();
+	// }
+	// }
 
 	public void wantLocation() {
 		locationController.enableLocation(Q4App.getInstance().getIntPreference(

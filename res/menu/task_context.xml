@@ -11,6 +11,6 @@
         android:title="Get location and finish"/>
     <item 
         android:id="@+id/menu_cancel"
-        android:title="Cancel"/>
+        android:title="Remove"/>
 
 </menu>

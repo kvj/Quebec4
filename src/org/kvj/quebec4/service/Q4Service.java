@@ -2,7 +2,10 @@ package org.kvj.quebec4.service;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.kvj.bravo7.SuperService;
 import org.kvj.quebec4.R;
 import org.kvj.quebec4.service.Q4Controller.ControllerListener;
@@ -22,15 +25,74 @@ public class Q4Service extends SuperService<Q4Controller, Q4App> implements
 
 	protected static final String TAG = "Q4Service";
 	protected static String LOCK_NAME = "Q4Service";
-	private BroadcastReceiver callbackReceiver = new BroadcastReceiver() {
+	private static final String GET_TASKS_ACTION = "org.kvj.quebec4.action.GET_LIST";
+	private static final String GET_TASKS_RESPONSE_ACTION = "org.kvj.quebec4.action.GET_LIST_RESP";
+	private static final String GET_TASK_ACTION = "org.kvj.quebec4.action.GET";
+	private static final String GET_TASK_RESPONSE_ACTION = "org.kvj.quebec4.action.GET_RESP";
+	private static final String GOT_TASK_ACTION = "org.kvj.quebec4.action.GOT";
+
+	private BroadcastReceiver getTaskReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			try {
+				synchronized (controller) {
+					int id = intent.getIntExtra("id", -1);
+					Log.i(TAG, "Get task: " + id);
+					TaskBean task = controller.getTask(id);
+					if (null != task) {
+						JSONObject taskObject = controller.taskToJSON(task,
+								true);
+						Intent outIntent = new Intent(GET_TASK_RESPONSE_ACTION);
+						outIntent.putExtra("object", taskObject.toString());
+						sendBroadcast(outIntent);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	};
+
+	private BroadcastReceiver gotTaskReceiver = new BroadcastReceiver() {
 
 		@Override
 		public void onReceive(Context context, Intent intent) {
 			Log.i(TAG, "Item created: " + intent);
 			try {
 				synchronized (controller) {
-					controller.updateStatus(intent.getIntExtra("callback", -1),
-							TaskBean.STATUS_SENT);
+					int id = intent.getIntExtra("id", -1);
+					if (controller.updateStatus(id, TaskBean.STATUS_SENT)) {
+						// TODO: Add cleanup old tasks to configuration
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+	};
+
+	private BroadcastReceiver getTasksReceiver = new BroadcastReceiver() {
+
+		@Override
+		public void onReceive(Context context, Intent intent) {
+			try {
+				synchronized (controller) {
+					Log.i(TAG, "Get tasks");
+					List<TaskBean> tasks = controller.getTasks(
+							TaskBean.STATUS_CONSUME, TaskBean.STATUS_SLEEP,
+							TaskBean.STATUS_CONSUME_AND_FINISH,
+							TaskBean.STATUS_READY);
+					JSONArray result = new JSONArray();
+					for (int i = 0; i < tasks.size(); i++) {
+						TaskBean task = tasks.get(i);
+						result.put(controller.taskToJSON(task, false));
+					}
+					Intent outIntent = new Intent(GET_TASKS_RESPONSE_ACTION);
+					outIntent.putExtra("list", result.toString());
+					sendBroadcast(outIntent);
 				}
 			} catch (Exception e) {
 				e.printStackTrace();
@@ -47,9 +109,9 @@ public class Q4Service extends SuperService<Q4Controller, Q4App> implements
 	public void onCreate() {
 		super.onCreate();
 		setAlarmBroadcastReceiverClass(DataAlarmReceiver.class);
-		IntentFilter filter = new IntentFilter();
-		filter.addAction("com.matburt.mobileorg.ng.CREATED");
-		registerReceiver(callbackReceiver, filter);
+		registerReceiver(getTasksReceiver, new IntentFilter(GET_TASKS_ACTION));
+		registerReceiver(getTaskReceiver, new IntentFilter(GET_TASK_ACTION));
+		registerReceiver(gotTaskReceiver, new IntentFilter(GOT_TASK_ACTION));
 		controller.setListener(this);
 		controller.rescheduleTasks();
 	}
@@ -85,7 +147,9 @@ public class Q4Service extends SuperService<Q4Controller, Q4App> implements
 	public void onDestroy() {
 		super.onDestroy();
 		controller.setListener(null);
-		unregisterReceiver(callbackReceiver);
+		unregisterReceiver(getTaskReceiver);
+		unregisterReceiver(getTasksReceiver);
+		unregisterReceiver(gotTaskReceiver);
 	}
 
 	public void searching() {

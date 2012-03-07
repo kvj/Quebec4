@@ -83,11 +83,15 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 			if ("path".equals(intent.getStringExtra("type"))) {
 				locationID = R.id.path_location;
 			}
+			if ("none".equals(intent.getStringExtra("type"))) {
+				locationID = R.id.no_location;
+			}
 			if ("camera".equals(intent.getStringExtra("type"))) {
 				startCamera();
 			}
 		}
 		locationType.check(locationID);
+		locationChanged(locationID);
 
 	}
 
@@ -249,7 +253,6 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 				notifyUser("Task is not created");
 				return;
 			}
-			controller.sendTasks();
 			if (task.status == TaskBean.STATUS_CONSUME) {
 				controller.wantLocation();
 			}
