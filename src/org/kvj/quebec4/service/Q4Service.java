@@ -158,7 +158,7 @@ public class Q4Service extends SuperService<Q4Controller, Q4App> implements
 	}
 
 	public void waiting() {
-		raiseNotification(R.drawable.s_sleep, "Timeout in path", TaskList.class);
+		raiseNotification(R.drawable.s_sleep, "Idle in path", TaskList.class);
 	}
 
 	public void done() {
