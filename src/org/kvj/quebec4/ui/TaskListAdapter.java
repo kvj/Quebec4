@@ -100,15 +100,26 @@ public class TaskListAdapter implements ListAdapter {
 			data.addAll(tasks);
 			for (TaskBean task : data) {
 				StringBuilder info = new StringBuilder();
+				List<PointBean> points = controller.getPoints(task.id);
 				if (TaskBean.TYPE_PATH == task.type) {
 					info.append("Every " + task.interval + " min. ");
-					List<PointBean> points = controller.getPoints(task.id);
 					if (points.size() > 0) {
 						PointBean last = points.get(points.size() - 1);
 						info.append("points: " + points.size());
 						info.append(" last: "
 								+ DateFormat.getTimeFormat(context).format(
 										new Date(last.created)));
+					}
+					if (task.status == TaskBean.STATUS_READY) {
+						info.append(", finished");
+					}
+				}
+				if (TaskBean.TYPE_POINT == task.type) {
+					if (points.size() > 0) {
+						PointBean point = points.get(0);
+						info.append("accuracy: " + Math.round(point.accuracy));
+					} else {
+						info.append("location not found");
 					}
 					if (task.status == TaskBean.STATUS_READY) {
 						info.append(", finished");

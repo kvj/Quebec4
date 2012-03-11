@@ -5,11 +5,9 @@
         android:icon="@drawable/a_reload"
         android:showAsAction="ifRoom"
         android:title="Reload"/>
-
     <item
         android:id="@+id/menu_new_drawing"
         android:icon="@drawable/a_d_drawing"
-        android:showAsAction="ifRoom"
         android:title="New drawing"/>
     <item
         android:id="@+id/menu_new_note"
@@ -21,23 +19,19 @@
         android:icon="@drawable/a_point"
         android:showAsAction="ifRoom"
         android:title="New checkin"/>
-
     <item
         android:id="@+id/menu_new_camera"
         android:icon="@drawable/a_camera"
         android:showAsAction="ifRoom"
         android:title="New photo"/>
-
     <item
         android:id="@+id/menu_new_path"
         android:icon="@drawable/a_path"
         android:showAsAction="ifRoom"
         android:title="New path"/>
-
     <item
         android:id="@+id/menu_settings"
         android:icon="@drawable/a_settings"
-        android:showAsAction="ifRoom"
         android:title="Settings"/>
 
 </menu>
