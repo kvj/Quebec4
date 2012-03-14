@@ -1,6 +1,7 @@
 package org.kvj.quebec4.ui;
 
 import java.io.File;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -12,12 +13,16 @@ import org.kvj.quebec4.R;
 import org.kvj.quebec4.service.Q4App;
 import org.kvj.quebec4.service.Q4Controller;
 import org.kvj.quebec4.service.Q4Service;
+import org.kvj.quebec4.service.data.PointBean;
 import org.kvj.quebec4.service.data.TaskBean;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -49,6 +54,9 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 	private static final int SELECT_PHOTO = Activity.RESULT_FIRST_USER + 2;
 	private String photoFile = null;
 	private String media = null;
+	private PointBean detectedLocation = null;
+	private Date createdDate = null;
+	DateFormat exifDateFormat = new SimpleDateFormat("yyyy:MM:dd HH:mm:ss");
 
 	public NewTask() {
 		super(Q4Service.class);
@@ -158,6 +166,39 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 		startActivityForResult(i, TAKE_PHOTO);
 	}
 
+	private void readExif(String path) {
+		if (null == path) {
+			notifyUser("Media not found");
+			return;
+		}
+		try {
+			ExifInterface exif = new ExifInterface(path);
+			float[] latlon = new float[2];
+			createdDate = new Date(new File(path).lastModified());
+			String exifDate = exif.getAttribute(ExifInterface.TAG_DATETIME);
+			if (null != exifDate) {
+				try {
+					createdDate = exifDateFormat.parse(exifDate);
+				} catch (Exception e) {
+				}
+			}
+			if (exif.getLatLong(latlon)) {
+				detectedLocation = new PointBean();
+				detectedLocation.altitude = exif.getAltitude(0);
+				detectedLocation.lat = latlon[0];
+				detectedLocation.lon = latlon[1];
+				detectedLocation.created = createdDate.getTime();
+				Log.i(TAG, "LatLon: " + latlon[0] + "x" + latlon[1]);
+			} else {
+				Log.i(TAG, "LatLon not found");
+			}
+			Log.i(TAG, "EXIF: alt2 = " + exif.getAltitude(-1));
+		} catch (Exception e) {
+			e.printStackTrace();
+			notifyUser("Error loading media data");
+		}
+	}
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent dt) {
 		// Log.i(TAG, "onActivityResult: " + requestCode + ", " + resultCode);
@@ -180,6 +221,22 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 					int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
 					photoPath = cursor.getString(columnIndex);
 					cursor.close();
+					new AlertDialog.Builder(this)
+							.setIcon(android.R.drawable.ic_dialog_alert)
+							.setTitle("Read data?")
+							.setMessage(
+									"Do you want to read date and location from image?")
+							.setPositiveButton("Yes",
+									new DialogInterface.OnClickListener() {
+
+										public void onClick(
+												DialogInterface dialog,
+												int which) {
+											readExif(media);
+										}
+
+									}).setNegativeButton("No", null).show();
+
 					break;
 				}
 				if (null != photoPath) {
@@ -247,8 +304,17 @@ public class NewTask extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 			task.interval = intervalNum;
 			break;
 		}
+		if (locationType.getCheckedRadioButtonId() != R.id.path_location) {
+			if (null != createdDate) {
+				task.created = createdDate.getTime();
+			}
+			if (null != detectedLocation) {
+				task.type = TaskBean.TYPE_POINT;
+				task.status = TaskBean.STATUS_READY;
+			}
+		}
 		synchronized (controller) {
-			Integer id = controller.createTask(task);
+			Integer id = controller.createTask(task, detectedLocation);
 			if (null == id) {
 				notifyUser("Task is not created");
 				return;

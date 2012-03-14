@@ -413,7 +413,7 @@ public class DrawingPane extends SuperActivity<Q4App, Q4Controller, Q4Service> {
 				} else {
 					task.media = file.getAbsolutePath();
 					synchronized (controller) {
-						Integer id = controller.createTask(task);
+						Integer id = controller.createTask(task, null);
 						if (null == id) {
 							notifyUser("Task is not created");
 							return;

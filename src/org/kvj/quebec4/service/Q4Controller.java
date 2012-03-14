@@ -70,7 +70,7 @@ public class Q4Controller {
 					TaskBean task = tasks.get(i);
 					if (null != point) {
 						point.taskID = task.id;
-						createPoint(point);
+						createPoint(point, true);
 					}
 					if (TaskBean.TYPE_POINT == task.type) {
 						updateStatus(task.id, TaskBean.STATUS_READY);
@@ -100,7 +100,7 @@ public class Q4Controller {
 		};
 	}
 
-	public Integer createTask(TaskBean task) {
+	public Integer createTask(TaskBean task, PointBean point) {
 		if (null == db) {
 			return null;
 		}
@@ -116,6 +116,10 @@ public class Q4Controller {
 			values.put("media", task.media);
 			long id = db.getDatabase().insert("tasks", null, values);
 			task.id = new Integer(new Long(id).intValue());
+			if (null != point) {
+				point.taskID = task.id;
+				createPoint(point, false);
+			}
 			db.getDatabase().setTransactionSuccessful();
 			return task.id;
 		} catch (Exception e) {
@@ -207,12 +211,14 @@ public class Q4Controller {
 		return false;
 	}
 
-	public Integer createPoint(PointBean point) {
+	public Integer createPoint(PointBean point, boolean createtrans) {
 		if (null == db) {
 			return null;
 		}
 		try {
-			db.getDatabase().beginTransaction();
+			if (createtrans) {
+				db.getDatabase().beginTransaction();
+			}
 			ContentValues values = new ContentValues();
 			values.put("task_id", point.taskID);
 			values.put("created", point.created);
@@ -223,12 +229,16 @@ public class Q4Controller {
 			values.put("accuracy", point.accuracy);
 			long id = db.getDatabase().insert("points", null, values);
 			point.id = new Integer(new Long(id).intValue());
-			db.getDatabase().setTransactionSuccessful();
+			if (createtrans) {
+				db.getDatabase().setTransactionSuccessful();
+			}
 			return point.id;
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			db.getDatabase().endTransaction();
+			if (createtrans) {
+				db.getDatabase().endTransaction();
+			}
 		}
 		return null;
 	}
