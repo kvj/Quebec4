@@ -1,5 +1,6 @@
 package org.kvj.quebec4.ui;
 
+import java.io.File;
 import java.util.Date;
 import java.util.List;
 
@@ -15,6 +16,7 @@ import org.kvj.quebec4.service.data.TaskBean;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.format.DateFormat;
 import android.util.Log;
@@ -61,6 +63,7 @@ public class TaskList extends ListActivity implements
 		menuTaskID = task.id;
 		menu.findItem(R.id.menu_finish_at).setEnabled(
 				task.type == TaskBean.TYPE_PATH);
+		menu.findItem(R.id.menu_preview).setEnabled(null != task.media);
 		menu.findItem(R.id.menu_point_and_finish).setEnabled(
 				task.type == TaskBean.TYPE_PATH);
 		List<PointBean> points = controller.getPoints(task.id);
@@ -99,6 +102,13 @@ public class TaskList extends ListActivity implements
 					synchronized (controller) {
 						controller.removeTask(task.id);
 					}
+					break;
+				case R.id.menu_preview:
+					Intent i = new Intent(Intent.ACTION_VIEW);
+					i.setDataAndType(Uri.fromFile(new File(task.media)),
+							"image/jpeg");
+					// i.setDataAndType(Uri.parse(task.media), "image/jpeg");
+					startActivity(i);
 					break;
 				}
 			} else {
