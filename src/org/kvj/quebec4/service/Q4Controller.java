@@ -1,5 +1,6 @@
 package org.kvj.quebec4.service;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,8 @@ public class Q4Controller {
 
 		public void schedule(int taskID, int mins);
 	}
+
+	private static final String TAG = "Q4";
 
 	private Q4DBHelper db = null;
 	private LocationController locationController = null;
@@ -459,6 +462,24 @@ public class Q4Controller {
 			return false;
 		}
 		try {
+			if (null != taskID) {
+				TaskBean task = getTask(taskID);
+				if (null != task && null != task.media) {
+					// Log.i(TAG, "Remove media:" + task.media + " = "
+					// + Q4App.getInstance().getExternalCacheDir());
+					if (task.media.startsWith(Q4App.getInstance()
+							.getExternalCacheDir().toString())) {
+						try {
+							File file = new File(task.media);
+							if (file.exists() && file.isFile()) {
+								file.delete();
+							}
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
 			db.getDatabase().beginTransaction();
 			db.getDatabase().delete("points", "task_id=?",
 					new String[] { taskID.toString() });
