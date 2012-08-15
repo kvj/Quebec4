@@ -82,7 +82,9 @@ abstract public class LocationController implements LocationListener {
 				handler.postDelayed(timeout, timeoutMins * 60 * 1000);
 			}
 			for (String prov : locationProviders) {
-				manager.requestLocationUpdates(prov, 0, 0, this);
+				if (manager.isProviderEnabled(prov)) { // Prov enabled
+					manager.requestLocationUpdates(prov, 0, 0, this);
+				}
 			}
 			enabled = true;
 			Log.i(TAG, "All location providers started");

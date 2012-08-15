@@ -24,7 +24,7 @@ public class CapturePanel extends AppWidgetProvider {
 		Intent intent = new Intent(context, NewTask.class);
 		intent.putExtra("type", type);
 		PendingIntent pendingIntent = PendingIntent.getActivity(context, id,
-				intent, PendingIntent.FLAG_CANCEL_CURRENT);
+				intent, PendingIntent.FLAG_UPDATE_CURRENT);
 		return pendingIntent;
 	}
 
@@ -59,7 +59,7 @@ public class CapturePanel extends AppWidgetProvider {
 			views.setOnClickPendingIntent(R.id.w_launcher, PendingIntent
 					.getActivity(context, 0,
 							new Intent(context, TaskList.class),
-							PendingIntent.FLAG_CANCEL_CURRENT));
+							PendingIntent.FLAG_UPDATE_CURRENT));
 			views.setOnClickPendingIntent(R.id.w_drawing, PendingIntent
 					.getActivity(context, 1, new Intent(context,
 							DrawingPane.class),

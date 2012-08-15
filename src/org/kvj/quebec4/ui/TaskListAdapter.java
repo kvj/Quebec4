@@ -6,9 +6,9 @@ import java.util.Date;
 import java.util.List;
 
 import org.kvj.quebec4.R;
+import org.kvj.quebec4.data.PointBean;
+import org.kvj.quebec4.data.TaskBean;
 import org.kvj.quebec4.service.Q4Controller;
-import org.kvj.quebec4.service.data.PointBean;
-import org.kvj.quebec4.service.data.TaskBean;
 
 import android.content.Context;
 import android.database.DataSetObserver;

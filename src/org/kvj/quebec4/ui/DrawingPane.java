@@ -7,11 +7,11 @@ import java.util.Locale;
 
 import org.kvj.bravo7.SuperActivity;
 import org.kvj.quebec4.R;
+import org.kvj.quebec4.data.TaskBean;
 import org.kvj.quebec4.service.DrawingController.PageDirection;
 import org.kvj.quebec4.service.Q4App;
 import org.kvj.quebec4.service.Q4Controller;
 import org.kvj.quebec4.service.Q4Service;
-import org.kvj.quebec4.service.data.TaskBean;
 import org.kvj.quebec4.ui.widget.LinesBackground;
 import org.kvj.quebec4.ui.widget.PageNavigator;
 import org.kvj.quebec4.ui.widget.PenCatcher;

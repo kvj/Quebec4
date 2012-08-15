@@ -8,13 +8,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.kvj.quebec4.R;
-import org.kvj.quebec4.service.data.PointBean;
+import org.kvj.quebec4.data.PointBean;
+import org.kvj.quebec4.data.Quebec4Service;
+import org.kvj.quebec4.data.Quebec4Service.Stub;
+import org.kvj.quebec4.data.TaskBean;
 import org.kvj.quebec4.service.data.Q4DBHelper;
-import org.kvj.quebec4.service.data.TaskBean;
 
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.location.Location;
+import android.os.Binder;
+import android.os.RemoteException;
 import android.util.Log;
 
 public class Q4Controller {
@@ -504,5 +508,43 @@ public class Q4Controller {
 
 	public void clearDrawing() {
 		drawing = null;
+	}
+
+	private Quebec4Service.Stub stub = new Stub() {
+
+		@Override
+		public boolean removeTask(TaskBean task) throws RemoteException {
+			return Q4Controller.this.removeTask(task.id);
+		}
+
+		@Override
+		public List<TaskBean> getTasks() throws RemoteException {
+			List<TaskBean> tasks = Q4Controller.this.getTasks(
+					TaskBean.STATUS_CONSUME, TaskBean.STATUS_SLEEP,
+					TaskBean.STATUS_CONSUME_AND_FINISH, TaskBean.STATUS_READY);
+			return tasks;
+		}
+
+		@Override
+		public TaskBean getTask(int id) throws RemoteException {
+			TaskBean task = Q4Controller.this.getTask(id);
+			if (null == task) { // Not found
+				return task;
+			}
+			List<PointBean> points = getPoints(task.id);
+			if (task.type == TaskBean.TYPE_POINT && points.size() == 1) {
+				// Have point
+				task.point = points.get(0);
+			}
+			if (task.type == TaskBean.TYPE_PATH && points.size() > 0) {
+				// Have points
+				task.points = points;
+			}
+			return task;
+		}
+	};
+
+	public Binder getService() {
+		return stub;
 	}
 }

@@ -7,11 +7,11 @@ import java.util.List;
 import org.kvj.bravo7.ControllerConnector;
 import org.kvj.bravo7.ControllerConnector.ControllerReceiver;
 import org.kvj.quebec4.R;
+import org.kvj.quebec4.data.PointBean;
+import org.kvj.quebec4.data.TaskBean;
 import org.kvj.quebec4.service.Q4App;
 import org.kvj.quebec4.service.Q4Controller;
 import org.kvj.quebec4.service.Q4Service;
-import org.kvj.quebec4.service.data.PointBean;
-import org.kvj.quebec4.service.data.TaskBean;
 
 import android.app.Activity;
 import android.app.ListActivity;

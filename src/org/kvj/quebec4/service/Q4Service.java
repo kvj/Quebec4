@@ -8,8 +8,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.kvj.bravo7.SuperService;
 import org.kvj.quebec4.R;
+import org.kvj.quebec4.data.TaskBean;
 import org.kvj.quebec4.service.Q4Controller.ControllerListener;
-import org.kvj.quebec4.service.data.TaskBean;
 import org.kvj.quebec4.ui.TaskList;
 
 import android.app.Service;

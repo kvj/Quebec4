@@ -20,7 +20,14 @@
         android:label="@string/app_name"
         android:name=".service.Q4App" >
         <service android:name=".service.Q4Service" />
-
+        <service
+            android:exported="true"
+            android:name=".service.Quebec4ServiceProvider" >
+            <intent-filter >
+                <action android:name="org.kvj.quebec4.SERVICE" />
+            </intent-filter>
+        </service>
+        
         <receiver android:name=".service.DataAlarmReceiver" />
         <receiver android:name=".service.StartupReceiver" >
             <intent-filter >
