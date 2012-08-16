@@ -1,7 +1,9 @@
 package org.kvj.quebec4.service;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONArray;
@@ -19,7 +21,6 @@ import android.database.Cursor;
 import android.location.Location;
 import android.os.Binder;
 import android.os.RemoteException;
-import android.util.Log;
 
 public class Q4Controller {
 
@@ -34,12 +35,39 @@ public class Q4Controller {
 		public void schedule(int taskID, int mins);
 	}
 
+	public static interface LocationStatusListener {
+		public void changed(String status);
+	}
+
 	private static final String TAG = "Q4";
 
 	private Q4DBHelper db = null;
 	private LocationController locationController = null;
 	private ControllerListener listener = null;
 	private DrawingController drawing = null;
+	private List<LocationStatusListener> locationStatusListeners = new ArrayList<LocationStatusListener>();
+	private String locationStatus = "Idle";
+
+	private SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm:ss");
+
+	private String getTime() {
+		return timeFormat.format(new Date());
+	}
+
+	private String locationStatusToString(Location location) {
+		if (null == location) { // not found
+			return "not found";
+		}
+		StringBuilder sb = new StringBuilder(String.format("%s: acc:%d",
+				location.getProvider(), (int) location.getAccuracy()));
+		if (0 != location.getSpeed()) { // Have speed
+			sb.append(String.format("/sp:%d", (int) location.getSpeed()));
+		}
+		if (0 != location.getAltitude()) { // Have speed
+			sb.append(String.format("/el:%d", (int) location.getAltitude()));
+		}
+		return sb.toString();
+	}
 
 	public Q4Controller() {
 		db = new Q4DBHelper(Q4App.getInstance());
@@ -50,6 +78,8 @@ public class Q4Controller {
 
 			@Override
 			public void locationStarted() {
+				setLocationStatus(getTime() + ": "
+						+ "searching for geo data...");
 			}
 
 			@Override
@@ -59,6 +89,8 @@ public class Q4Controller {
 					int accuracy = Q4App.getInstance().getIntPreference(
 							R.string.accuracyConfig,
 							R.string.accuracyConfigDefault);
+					setLocationStatus(getTime() + ": "
+							+ locationStatusToString(location));
 					if (location.getAccuracy() > accuracy) {
 						return false;
 					}
@@ -68,8 +100,8 @@ public class Q4Controller {
 					point.lat = location.getLatitude();
 					point.lon = location.getLongitude();
 					point.speed = location.getSpeed();
-					Log.i(TAG, "Found point: " + pointToCoordinates(point)
-							+ ", " + pointToPointDetails(point));
+					// Log.i(TAG, "Found point: " + pointToCoordinates(point)
+					// + ", " + pointToPointDetails(point));
 				}
 				List<TaskBean> tasks = getTasks(TaskBean.STATUS_CONSUME,
 						TaskBean.STATUS_CONSUME_AND_FINISH);
@@ -102,7 +134,9 @@ public class Q4Controller {
 			}
 
 			@Override
-			public void locationFinished() {
+			public void locationFinished(Location location) {
+				setLocationStatus(getTime() + ": last: "
+						+ locationStatusToString(location));
 			}
 		};
 	}
@@ -418,7 +452,7 @@ public class Q4Controller {
 		if (consumingTasks.size() > 0) {
 			listener.searching();
 		} else {
-			locationController.disableLocation();
+			locationController.disableLocation(null);
 			List<TaskBean> sleepTasks = getTasks(TaskBean.STATUS_SLEEP);
 			if (sleepTasks.size() > 0) {
 				listener.waiting();
@@ -546,5 +580,33 @@ public class Q4Controller {
 
 	public Binder getService() {
 		return stub;
+	}
+
+	private void setLocationStatus(String locationStatus) {
+		this.locationStatus = locationStatus;
+		synchronized (locationStatusListeners) { // Lock
+			for (LocationStatusListener listener : locationStatusListeners) {
+				// Report status
+				listener.changed(locationStatus);
+			}
+		}
+	}
+
+	public void addLocationStatusListener(LocationStatusListener listener) {
+		synchronized (locationStatusListeners) { // Lock
+			if (!locationStatusListeners.contains(listener)) { // Don't have
+				locationStatusListeners.add(listener);
+			}
+		}
+	}
+
+	public void removeLocationStatusListener(LocationStatusListener listener) {
+		synchronized (locationStatusListeners) { // Lock
+			locationStatusListeners.remove(listener);
+		}
+	}
+
+	public String getLocationStatus() {
+		return locationStatus;
 	}
 }

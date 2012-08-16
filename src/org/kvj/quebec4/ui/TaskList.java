@@ -11,10 +11,10 @@ import org.kvj.quebec4.data.PointBean;
 import org.kvj.quebec4.data.TaskBean;
 import org.kvj.quebec4.service.Q4App;
 import org.kvj.quebec4.service.Q4Controller;
+import org.kvj.quebec4.service.Q4Controller.LocationStatusListener;
 import org.kvj.quebec4.service.Q4Service;
 
 import android.app.Activity;
-import android.app.ListActivity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -26,9 +26,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView.AdapterContextMenuInfo;
+import android.widget.ListView;
+import android.widget.TextView;
 
-public class TaskList extends ListActivity implements
-		ControllerReceiver<Q4Controller> {
+public class TaskList extends Activity implements
+		ControllerReceiver<Q4Controller>, LocationStatusListener {
 
 	private static final String TAG = "TaskList";
 	private static final int CREATE_TASK = Activity.RESULT_FIRST_USER + 1;
@@ -36,16 +38,21 @@ public class TaskList extends ListActivity implements
 	ControllerConnector<Q4App, Q4Controller, Q4Service> cc = null;
 	TaskListAdapter adapter = null;
 	Integer menuTaskID = null;
+	ListView listView = null;
+	TextView statusView = null;
 
 	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		adapter = new TaskListAdapter();
-		setListAdapter(adapter);
+		setContentView(R.layout.task_list);
+		listView = (ListView) findViewById(R.id.task_list_list);
+		statusView = (TextView) findViewById(R.id.task_list_status);
+		listView.setAdapter(adapter);
 		Intent serviceIntent = new Intent(this, Q4Service.class);
 		startService(serviceIntent);
-		registerForContextMenu(getListView());
+		registerForContextMenu(listView);
 	}
 
 	@Override
@@ -179,6 +186,8 @@ public class TaskList extends ListActivity implements
 	}
 
 	public void onController(Q4Controller controller) {
+		controller.addLocationStatusListener(this);
+		changed(controller.getLocationStatus());
 		if (null != this.controller) {
 			return;
 		}
@@ -189,6 +198,9 @@ public class TaskList extends ListActivity implements
 	@Override
 	protected void onStop() {
 		super.onStop();
+		if (null != controller) { // Disconnect listener
+			controller.removeLocationStatusListener(this);
+		}
 		cc.disconnectController();
 	}
 
@@ -200,5 +212,18 @@ public class TaskList extends ListActivity implements
 				adapter.setController(this, controller);
 			}
 		}
+	}
+
+	@Override
+	public void changed(final String status) {
+		runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+				if (null != statusView) { // Have status
+					statusView.setText(status);
+				}
+			}
+		});
 	}
 }

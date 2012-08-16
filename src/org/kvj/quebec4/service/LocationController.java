@@ -25,7 +25,7 @@ abstract public class LocationController implements LocationListener {
 		public void run() {
 			if (enabled) {
 				if (locationFound(null)) {
-					disableLocation();
+					disableLocation(null);
 				}
 			}
 		}
@@ -42,7 +42,7 @@ abstract public class LocationController implements LocationListener {
 				"Location[" + location.getProvider() + "]: "
 						+ location.getAccuracy() + ", " + location.getSpeed());
 		if (locationFound(location)) {
-			disableLocation();
+			disableLocation(location);
 		}
 		// Found
 		// loc.put("lon", location.getLongitude());
@@ -53,13 +53,13 @@ abstract public class LocationController implements LocationListener {
 		// loc.put("at", new Date().getTime());
 	}
 
-	public void disableLocation() {
+	public void disableLocation(Location location) {
 		if (enabled) {
 			Log.i(TAG, "Disabling location");
 			manager.removeUpdates(this);
 			handler.removeCallbacks(timeout);
 			enabled = false;
-			locationFinished();
+			locationFinished(location);
 		}
 	}
 
@@ -96,7 +96,8 @@ abstract public class LocationController implements LocationListener {
 
 	abstract public void locationStarted();
 
-	abstract public void locationFinished();
+	abstract public void locationFinished(Location location);
 
 	abstract public boolean locationFound(Location location);
+
 }
