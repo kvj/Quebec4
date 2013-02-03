@@ -15,3 +15,4 @@
 ![Main UI](doc/q401.png)
 ![Editor](doc/q402.png)
 ![Context menu](doc/q403.png)
+![Panel](doc/q404.png)
