@@ -1,6 +1,6 @@
 ## Quebec4 - Media collector on Android device
 
-## Main features
+### Main features
 * Makes photos or imports media from Gallery
 * Optionally adds Geo location
 * Records paths by taking coorinates at specified interval
@@ -10,7 +10,7 @@
 
 [Sierra5](https://github.com/kvj/Sierra5) application has a plugin for Quebec4 for importing media
 
-## Screenshots
+### Screenshots
 
 ![Main UI](doc/q401.png)
 ![Editor](doc/q402.png)
